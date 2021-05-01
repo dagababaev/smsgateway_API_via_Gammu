@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>smssend</title>
+        <!-- Bootstrap core CSS -->
+        <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+        <!-- Custom styles for this template -->
+        <link href="css/sign-in.css" rel="stylesheet">
+    </head>
+    <body class="text-center" style="display:grid;grid-template-columns:1fr minmax(400px, 1fr) 1fr;grid-template-rows:auto auto;grid-template-areas:'. header .' '. form .';grid-gap:10px;">
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <form class="form-signin text-body d-block mt-0 mb-auto" method="get" id="send_form" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 100px 100px 100px;  width: 100%;grid-area:form;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;grid-template-areas:'uuid .' 'phone phone' 'textarea textarea';grid-gap:10px;">
+                <input type="text" id="inputEmail" class="form-control text-center mt-0 mb-0" placeholder="UUID" required autofocus name="login" style="grid-area: uuid; border-top-left-radius: 16px;">
+                <input type="password" id="inputPassword" class="form-control text-center mt-0 mb-0" required placeholder="Пароль" name="pass" style="grid-area: 1 / 2 / 1 / 3; border-top-right-radius: 16px;">
+                <textarea class="form-control mb-0 mt-0 " placeholder="Номера телефонов через запятую" rows="3" required="null" name="tel" style="grid-area:phone;" maxlength="130"></textarea>
+                <textarea class="form-control mt-0 mb-0" placeholder="Текст сообщения" rows="5" required="null" name="msg" id="inputCount" style="grid-area:textarea;"></textarea>
+                <p style="font-size: 9pt; text-align: left;" class="text-white-50">Введено символов: <span id="charCount"></span><br/>
+           			Количество sms: <span id="smsCount"></span></p>
+                <button class="btn active shadow-sm bg-warning btn-lg" type="submit" id="btn" style="border-bottom-right-radius: 16px;">Отправить</button>
+            </div>
+        </form>
+        <div class="pg-empty-placeholder particle position-absolute w-100 h-100" style="z-index: -1;"></div>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <!-- AJAX FORM -->
+        <script type="text/javascript">
+        $( document ).ready(function() {
+            $("#btn").click(
+                function(){
+                    document.getElementById("btn").innerHTML = "Поставлено в очередь";
+                    sendAjaxForm('result_form', 'send_form');
+                    return false;
+                }
+            );
+        });
+
+        function sendAjaxForm(result_form, send_form) {
+
+          $.ajax({
+                  cache: false,
+                  url: "/<your_addresss>.php", //url страницы (action_send_form.php)
+                  type: "POST", //метод отправки
+                  data: "login=" + $('[name=login]').val() + "&pass=" + $('[name=pass]').val() + "&tel=" + $('[name=tel]').val() + "&msg=" + encodeURIComponent($('#inputCount').val()),
+                  dataType: "html", //формат данных
+                  success: function(response) { //Данные отправлены успешно
+                      var data = JSON.parse(response);
+                      document.getElementById("result_form").innerHTML = data.description;
+                  },
+                  error: function(response) { // Данные не отправлены
+                      // document.getElementById("result_form").innerHTML = response;
+                      var data = JSON.parse(response);
+                      alert(data.description);
+                  }
+              });
+    }
+
+        </script>
+
+        <!-- COUNTER -->
+        <script type="text/javascript">
+        var characters_Limit = 280;
+        $('#inputCount').keyup(function() {
+
+            document.getElementById("btn").innerHTML = "Отправить";
+            if ($(this).val().length > characters_Limit) {
+                 $(this).val($(this).val().substr(0, characters_Limit));
+
+            }
+             $('#charCount').text(this.value.replace(/{.*}/g, '').length);
+
+            var regexp = /^[a-z\s]+$/i;
+               if(!regexp.test($(this).val())) {
+                   $('#smsCount').text(Math.ceil(this.value.replace(/{.*}/g, '').length/70));
+               } else {
+                   $('#smsCount').text(Math.ceil(this.value.replace(/{.*}/g, '').length/160));
+               }
+        });
+
+        </script>
+    </body>
+</html>
