@@ -49,14 +49,13 @@
                   url: "/<your_addresss>.php", //url страницы (action_send_form.php)
                   type: "POST", //метод отправки
                   data: "login=" + $('[name=login]').val() + "&pass=" + $('[name=pass]').val() + "&tel=" + $('[name=tel]').val() + "&msg=" + encodeURIComponent($('#inputCount').val()),
-                  dataType: "html", //формат данных
+                  dataType: "json", //формат данных
                   success: function(response) { //Данные отправлены успешно
                       var data = JSON.parse(response);
-                      document.getElementById("result_form").innerHTML = data.description;
+                      alert(data.description);
                   },
                   error: function(response) { // Данные не отправлены
-                      // document.getElementById("result_form").innerHTML = response;
-                      var data = JSON.parse(response);
+                      var data = JSON.parse(response.responseText);
                       alert(data.description);
                   }
               });
