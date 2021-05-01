@@ -44,7 +44,7 @@ class SMS_data_handle {
   }
 
   public function get_sms_queue($sms_count) {
-    return $this->PDO->query("SELECT * FROM sms_queue WHERE dateTime >= NOW() - INTERVAL 10 MINUTE AND status LIKE '' OR status IS NULL LIMIT {$sms_count})");
+    return $this->PDO->query("SELECT * FROM sms_queue WHERE dateTime >= NOW() - INTERVAL 10 MINUTE AND status LIKE '' OR status IS NULL LIMIT {$sms_count}");
   }
 
 
