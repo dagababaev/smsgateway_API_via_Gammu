@@ -33,6 +33,9 @@ class SMS_data_handle {
       'attempts' => @$_REQUEST['attempts']
     ];
     $data['attempts'] = (@$_REQUEST['attempts']) ?: 1;
+    
+    if (empty($_REQUEST['tel'])) http_response::return(200, ["success" => false, "description" => "Phone number is empty"]);
+    if (empty($_REQUEST['msg'])) http_response::return(200, ["success" => false, "description" => "Message is empty"]);
 
     foreach ($phone_array as $phone) {
       $data['phone'] = $phone;
@@ -44,7 +47,7 @@ class SMS_data_handle {
   }
 
   public function get_sms_queue($sms_count) {
-    return $this->PDO->query("SELECT * FROM sms_queue WHERE dateTime >= NOW() - INTERVAL 10 MINUTE AND status LIKE '' OR status IS NULL LIMIT {$sms_count}");
+    return $this->PDO->query("SELECT * FROM sms_queue WHERE status LIKE '' OR status IS NULL AND dateTime >= NOW() - INTERVAL 10 MINUTE LIMIT {$sms_count}");
   }
 
 
